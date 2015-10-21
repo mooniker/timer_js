@@ -1,63 +1,52 @@
-// Create Javascript selectors that target each of the timer buttons
+var timer = {
+  seconds: 0,
+  timerId: 0,
+  is_running: false,
+  htmlDoc: { // selectors to target each of the timer's elements
+    timerH1: document.getElementById("timer"),
+    startButton: document.getElementById("start"),
+    pauseButton: document.getElementById("pause"),
+    resetButton: document.getElementById("reset"),
+  },
+  displayTime: function () { // updates the elapsed time to H1
+    this.htmlDoc.timerH1.innerText = "Time elapsed: " + this.seconds;
+  },
+  updateTime: function () { //Increments seconds counter, updates display.
+    this.seconds += 1;
+    this.displayTime(); // TODO: "uncaught TypeError: this.display is not a function"
+    //this.htmlDoc.timerH1.innerText = "Time elapsed: " + this.seconds;
+  },
+  startTimer: function () {
+    if ( this.is_running ) {
+      console.log("Timer already started.");
+    } else {
+      console.log("Timer started.");
+      this.updateTime();
+      this.timerId = setInterval(this.updateTime, 1000);  //.bind(this)?
+      this.is_running = true;
+    }
+  },
+  pauseTimer: function () {
+    if ( this.is_running ) {
+      console.log("Timer paused.");
+      clearInterval(this.timerId); // stops the timer // .bind(this)?
+      this.is_running = false;
+    } else {
+      console.log("Timer already paused.");
+    }
+  },
+  resetTimer: function () {
+    console.log("Timer reset at " + this.seconds + " seconds.");
+    clearInterval(this.timerId); // stops the timer // .binf(this)?
+    this.seconds = 0; // resets the timer
+    this.htmlDoc.timerH1.innerText = "Stop Watch";
+  },
+  // Click handlers for each of the timer buttons.
+  listenForEvents: function () {
+    this.htmlDoc.startButton.addEventListener("click", this.startTimer.bind(this));
+    this.htmlDoc.pauseButton.addEventListener("click", this.pauseTimer.bind(this));
+    this.htmlDoc.resetButton.addEventListener("click", this.resetTimer.bind(this));
+  },
+};
 
-var start = document.querySelector("#start");
-var pause = document.querySelector("#pause");
-var reset = document.querySelector("#reset");
-
-var timer_is_running = false; // Keeps track of whether the timer is running.
-
-// Create click handlers for each of the timer buttons.
-
-start.addEventListener("click", function () {
-  // start
-  if ( timer_is_running ) {
-    console.log("Timer already started.");
-  } else {
-  console.log("Timer started.");
-    // Replace "Stop Watch" in the HTML with the content of the seconds variable.
-    document.querySelector("#timer").innerText = "Time elapsed: " + seconds;
-    // Use setInterval() to increment the timer by 1 every second
-    timerId = setInterval(updateTime, 1000);
-    timer_is_running = true;
-  }
-});
-
-pause.addEventListener("click", function () {
-  // pause
-  if ( timer_is_running ) {
-    console.log("Timer paused.");
-    // Stop -- but do not reset! -- the timer using clearInterval().
-    clearInterval(timerId);
-    timer_is_running = false;
-  } else {
-    console.log("Timer already paused.");
-  }
-});
-
-reset.addEventListener("click", function () {
-  // reset
-  console.log("Timer reset.");
-  // Stop the timer using clearInterval().
-  clearInterval(timerId);
-  // Reset the timer.
-  seconds = 0;
-  // Replace the time in your HTML with the original "Stop Watch" text.
-  document.querySelector("#timer").innerText = "Stop Watch";
-  timer_is_running = false;
-});
-
-// Instantiate seconds and timerId variables for the timer.
-// The latter will make more sense after reading up on setInterval().
-
-var seconds = 0;
-var timerId;
-// var timerId = document.querySelector("#timer");
-
-
-// Create an updateTime() function that increments the seconds counter and
-// inserts that value into the <h1> element with id="timer".
-
-function updateTime() {
-  seconds += 1;
-  document.querySelector("#timer").innerText = "Time elapsed: " + seconds;
-}
+timer.listenForEvents();
